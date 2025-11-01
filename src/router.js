@@ -1,6 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router';
 import LoginView from './views/LoginView.vue';
 import DashboardView from './views/DashboardView.vue';
+import ProfileView from './views/ProfileView.vue';
 
 const routes = [
   { path: '/', component: LoginView },
@@ -9,6 +10,7 @@ const routes = [
     component: DashboardView,
     meta: { requiresAuth: true },
   },
+  { path: '/perfil', component: ProfileView, meta: { requiresAuth: true } },
 ];
 
 const router = createRouter({

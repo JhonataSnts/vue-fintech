@@ -2,10 +2,16 @@
   <div class="dashboard">
     <h1>Painel Fintech</h1>
     <button @click="logout">Sair</button>
+    <button @click="$router.push('/perfil')">Meu Perfil</button>
 
     <section class="saldo">
       <p>Saldo: R$ {{ saldo }}</p>
     </section>
+
+    <section class="saldo">
+  <p>Saldo: R$ {{ saldo }}</p>
+  <button @click="depositarSaldo">Depositar R$100</button>
+  </section>
 
     <section class="nova-transacao">
       <h2>Nova Transação</h2>
@@ -78,6 +84,17 @@ async function carregarUsuario() {
     saldo.value = res.data.saldo;
   } catch (err) {
     console.error(err);
+  }
+}
+
+async function depositarSaldo() {
+  try {
+    await api.post('transactions/deposit', { amount: 100 });
+    await carregarUsuario();
+    alert('Depósito realizado com sucesso!');
+  } catch (err) {
+    console.error(err);
+    alert('Erro ao depositar.');
   }
 }
 
