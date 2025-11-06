@@ -1,70 +1,70 @@
 <template>
-  <div class="min-h-screen flex flex-col items-center justify-center bg-gray-100">
-    <div class="bg-white shadow-lg rounded-xl p-8 w-full max-w-sm">
-      <h1 class="text-2xl font-semibold mb-6 text-center">Login Fintech</h1>
+  <div class="flex items-center justify-center min-h-screen bg-gray-100">
+    <div class="bg-white p-8 rounded-2xl shadow-md w-full max-w-md">
+      <h1 class="text-3xl font-bold text-center mb-6 bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+        Login
+      </h1>
 
       <form @submit.prevent="login">
         <div class="mb-4">
-          <label class="block text-sm font-medium mb-1">Email</label>
+          <label class="block text-gray-700 mb-1">Email</label>
           <input
-            v-model="email"
             type="email"
-            class="w-full border rounded-lg p-2"
-            placeholder="seu@email.com"
+            v-model="email"
+            class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-500 outline-none"
+            required
           />
         </div>
 
-        <div class="mb-6">
-          <label class="block text-sm font-medium mb-1">Senha</label>
+        <div class="mb-4">
+          <label class="block text-gray-700 mb-1">Senha</label>
           <input
-            v-model="password"
             type="password"
-            class="w-full border rounded-lg p-2"
-            placeholder="********"
+            v-model="password"
+            class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-500 outline-none"
+            required
           />
         </div>
 
         <button
           type="submit"
-          class="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition"
+          class="w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white py-2 rounded-lg hover:opacity-90 transition"
         >
           Entrar
         </button>
       </form>
 
-      <p v-if="error" class="text-red-500 text-sm mt-4">{{ error }}</p>
+      <p v-if="error" class="text-red-500 text-sm text-center mt-3">{{ error }}</p>
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref } from 'vue';
-import api from '../services/api';
-import { useRouter } from 'vue-router';
+import { ref } from "vue";
+import axios from "axios";
 
-const email = ref('');
-const password = ref('');
-const error = ref('');
-const router = useRouter();
+const email = ref("");
+const password = ref("");
+const error = ref("");
 
-const login = async () => {
+async function login() {
+  error.value = ""; // limpa erro anterior
+
   try {
-    const response = await api.post('/login', {
+    const response = await axios.post("http://localhost:8000/api/login", {
       email: email.value,
       password: password.value,
     });
 
-    localStorage.setItem('token', response.data.access_token);
-    alert('Login realizado com sucesso!');
-    router.push('/dashboard');
-  } catch (err) {
-    error.value = err.response?.data?.message || 'Falha no login.';
-  }
-};
-</script>
+    // ✅ Salva token e usuário
+    localStorage.setItem("token", response.data.access_token);
+    localStorage.setItem("user", JSON.stringify(response.data.user));
 
-<style>
-body {
-  font-family: sans-serif;
+    // Redireciona
+    window.location.href = "/dashboard";
+  } catch (err) {
+    console.error(err.response?.data || err);
+    error.value = "Credenciais inválidas. Tente novamente.";
+  }
 }
-</style>
+</script>
